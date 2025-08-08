@@ -1,5 +1,5 @@
 import type { TransactionType } from "@prisma/client";
-import type { CategorySummary } from "./catgory.types";
+import type { CategorySummary } from "./catgory.types.js";
 
 export interface TransactionDTO {
 	id?: string;

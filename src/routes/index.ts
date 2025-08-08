@@ -1,6 +1,6 @@
 import type { FastifyInstance } from "fastify";
-import categoryRoutes from "./category.routes";
-import transactionRoutes from "./transaction.routes";
+import categoryRoutes from "./category.routes.js";
+import transactionRoutes from "./transaction.routes.js";
 
 async function routes(fastify: FastifyInstance): Promise<void> {
 	fastify.get("/health", async () => {

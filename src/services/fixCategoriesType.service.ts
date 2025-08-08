@@ -1,4 +1,4 @@
-import prisma from "../config/prisma";
+import prisma from "../config/prisma.js";
 
 // Corrige documentos antigos com type em minúsculo ("expense"/"income")
 export async function normalizeCategoryTypeValues(): Promise<void> {

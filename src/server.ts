@@ -1,29 +1,83 @@
-import app from "./app";
-import { env } from "./config/env";
-import initializeFirebaseAdmin from "./config/firebase";
-import { prismaConnect } from "./config/prisma";
-import { initializeGlobalCategories } from "./services/globalCategories.service";
-import { normalizeCategoryTypeValues } from "./services/fixCategoriesType.service";
+import app from "./app.js";
+import { env } from "./config/env.js";
+import initializeFirebaseAdmin from "./config/firebase.js";
+import prisma, { prismaConnect } from "./config/prisma.js";
+import { initializeGlobalCategories } from "./services/globalCategories.service.js";
+import { normalizeCategoryTypeValues } from "./services/fixCategoriesType.service.js";
 
-const PORT = process.env.PORT || env.PORT || 3000;
+const PORT = Number(process.env.PORT || env.PORT || 3000);
+const HOST = "0.0.0.0";
 
-initializeFirebaseAdmin();
+let isShuttingDown = false;
 
-const startServer = async () => {
-	try {
-		await prismaConnect();
+function printStartupBanner() {
+    const now = new Date().toLocaleString();
+    // eslint-disable-next-line no-console
+    console.log(
+        [
+            "\n========================================",
+            ` DevBills API` ,
+            "----------------------------------------",
+            ` Env: ${env.NODE_ENV}`,
+            ` Port: ${PORT}`,
+            ` Host: ${HOST}`,
+            ` CORS: ${process.env.CORS_ORIGIN ?? env.CORS_ORIGIN ?? "http://localhost:5173"}`,
+            ` Started at: ${now}`,
+            "========================================\n",
+        ].join("\n"),
+    );
+}
 
-		// Corrige possíveis registros antigos com type em minúsculo
-		await normalizeCategoryTypeValues();
+async function shutdown(signal: string) {
+    if (isShuttingDown) return;
+    isShuttingDown = true;
+    // eslint-disable-next-line no-console
+    console.log(`\n[DevBills] Received ${signal}. Shutting down gracefully...`);
+    try {
+        await app.close();
+    } catch (err) {
+        // eslint-disable-next-line no-console
+        console.error("[DevBills] Error while closing Fastify app:", err);
+    }
+    try {
+        await prisma.$disconnect();
+    } catch (err) {
+        // eslint-disable-next-line no-console
+        console.error("[DevBills] Error while disconnecting Prisma:", err);
+    }
+    process.exit(0);
+}
 
-		await initializeGlobalCategories();
+process.on("SIGINT", () => void shutdown("SIGINT"));
+process.on("SIGTERM", () => void shutdown("SIGTERM"));
+process.on("unhandledRejection", (reason) => {
+    // eslint-disable-next-line no-console
+    console.error("[DevBills] Unhandled Rejection:", reason);
+});
+process.on("uncaughtException", (err) => {
+    // eslint-disable-next-line no-console
+    console.error("[DevBills] Uncaught Exception:", err);
+});
 
-		await app.listen({ port: Number(PORT), host: "0.0.0.0" });
+async function startServer() {
+    try {
+        initializeFirebaseAdmin();
 
-		console.log(`🚀 Server is running on port ${PORT}`);
-	} catch (error) {
-		console.error("Error starting the server:", error);
-	}
-};
+        await prismaConnect();
 
-startServer();
+        // Corrige possíveis registros antigos com type em minúsculo
+        await normalizeCategoryTypeValues();
+
+        await initializeGlobalCategories();
+
+        await app.listen({ port: PORT, host: HOST });
+
+        printStartupBanner();
+    } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error("[DevBills] Error starting the server:", error);
+        process.exit(1);
+    }
+}
+
+void startServer();

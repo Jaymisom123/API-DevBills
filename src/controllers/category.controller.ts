@@ -1,6 +1,6 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
-import prisma from "../config/prisma";
-import { env } from "../config/env";
+import prisma from "../config/prisma.js";
+import { env } from "../config/env.js";
 
 export const getCategories = async (
     request: FastifyRequest,

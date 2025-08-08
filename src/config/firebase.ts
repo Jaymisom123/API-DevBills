@@ -1,5 +1,5 @@
 import admin from "firebase-admin";
-import { env } from "./env";
+import { env } from "./env.js";
 
 const initializeFirebaseAdmin = (): void => {
 	if (admin.apps.length > 0) return;

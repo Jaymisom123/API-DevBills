@@ -1,9 +1,9 @@
 import { TransactionType } from "@prisma/client";
 import dayjs from "dayjs";
 import type { FastifyReply, FastifyRequest } from "fastify";
-import prisma from "../../config/prisma";
-import type { CategorySummary } from "../../types/catgory.types";
-import type { TransactionSummary } from "../../types/transaction.types";
+import prisma from "../../config/prisma.js";
+import type { CategorySummary } from "../../types/catgory.types.js";
+import type { TransactionSummary } from "../../types/transaction.types.js";
 
 interface SummaryQuery {
 	month: string;
