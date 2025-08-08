@@ -60,8 +60,8 @@ export const getTransactions = async (
 			},
 		});
 		reply.send(transactions);
-	} catch (err) {
-		request.log.error("error in getTransactions", err);
-		reply.status(500).send({ error: "Internal Server Error" });
-	}
+    } catch (error) {
+        request.log.error({ error }, "error in getTransactions");
+        reply.status(500).send({ error: "Internal Server Error" });
+    }
 };

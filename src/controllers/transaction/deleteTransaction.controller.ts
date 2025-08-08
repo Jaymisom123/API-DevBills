@@ -33,9 +33,9 @@ export const deleteTransaction = async (
 			},
 		});
 		reply.status(200).send({ message: "Transaction deleted successfully" });
-	} catch (err) {
-		request.log.error("error in delete transaction", err);
-		reply.status(500).send({ error: "Internal Server Error" });
-	}
+    } catch (error) {
+        request.log.error({ error }, "error in delete transaction");
+        reply.status(500).send({ error: "Internal Server Error" });
+    }
 
 };

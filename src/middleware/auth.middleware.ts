@@ -41,9 +41,9 @@ export const authMiddleware = async (
 
 		// Adiciona o userId ao request (para uso nos controllers)
 		request.userId = decodedToken.uid;
-	} catch (error) {
-		console.error("[DevBills][Middleware] Erro ao verificar token:", error);
-		request.log.error("Erro ao verificar token:", error);
-		reply.code(401).send({ error: "Token inválido ou expirado" });
-	}
+  } catch (error) {
+    console.error("[DevBills][Middleware] Erro ao verificar token:", error);
+    request.log.error({ error }, "Erro ao verificar token:");
+    reply.code(401).send({ error: "Token inválido ou expirado" });
+  }
 };

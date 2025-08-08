@@ -98,8 +98,8 @@ export const getTransactionSummary = async (
 		};
 
 		reply.send(summary);
-	} catch (error) {
-		request.log.error("Erro ao gerar resumo:", error);
-		reply.status(500).send({ error: "Erro ao gerar resumo" });
-	}
+    } catch (error) {
+        request.log.error({ error }, "Erro ao gerar resumo");
+        reply.status(500).send({ error: "Erro ao gerar resumo" });
+    }
 };

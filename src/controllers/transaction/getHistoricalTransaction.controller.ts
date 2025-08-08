@@ -72,8 +72,8 @@ export const getHistoricalTransactions = async (
 		});
 
 		reply.send({ history: montlyData });
-	} catch (err) {
-		request.log.error("error in get historical transactions", err);
-		reply.status(500).send({ error: "Internal Server Error" });
-	}
+    } catch (error) {
+        request.log.error({ error }, "error in get historical transactions");
+        reply.status(500).send({ error: "Internal Server Error" });
+    }
 };
