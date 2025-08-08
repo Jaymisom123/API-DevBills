@@ -10,13 +10,17 @@ const app: FastifyInstance = fastify({
 	},
 });
 
+// Permite múltiplas origens definidas via CORS_ORIGIN (separadas por vírgula)
+const allowedOrigins = (
+    env.CORS_ORIGIN && env.CORS_ORIGIN.trim().length > 0
+        ? env.CORS_ORIGIN.split(",").map((o) => o.trim())
+        : []
+).concat(["http://localhost:5173", "https://dev-billss.netlify.app"]);
+
 app.register(cors, {
-	origin: [
-		// "https://devbillsfinancas.netlify.app",
-		env.CORS_ORIGIN || "http://localhost:5173"
-	],
-	methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-	allowedHeaders: ["Authorization", "Content-Type"],
+    origin: allowedOrigins,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Authorization", "Content-Type"],
 });
 
 app.register(routes, { prefix: "/api" });
